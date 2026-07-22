@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finance Purchasing — PT ALMA ATA LIFE</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2 class="logo">FP</h2>
+      <span class="logo-text">Finance Purchasing</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" data-page="dashboard">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span>Dashboard</span>
+      </a>
+      <a href="#" class="nav-item" data-page="tagihan">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 14h6"/><path d="M9 18h4"/></svg>
+        <span>Tagihan Masuk</span>
+      </a>
+      <a href="#" class="nav-item" data-page="detail-po">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <span>Detail PO</span>
+      </a>
+      <a href="#" class="nav-item" data-page="pembayaran">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <span>Form Pembayaran</span>
+      </a>
+      <a href="#" class="nav-item" data-page="log-pembelian">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span>Log Pembelian</span>
+      </a>
+      <a href="#" class="nav-item" data-page="log-pembayaran">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <span>Log Pembayaran</span>
+      </a>
+      <a href="#" class="nav-item" data-page="rekap">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+        <span>Rekap Hutang</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="avatar">HE</div>
+        <div class="user-detail">
+          <span class="user-name">Hasrul Eko</span>
+          <span class="user-role">Finance</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Mobile Header -->
+  <header class="mobile-header" id="mobileHeader">
+    <button class="menu-toggle" id="menuToggle">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <span class="mobile-title">Finance Purchasing</span>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content" id="mainContent">
+
+    <!-- ========== DASHBOARD ========== -->
+    <section class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Dashboard</h1>
+          <p class="page-subtitle">Ringkasan keuangan pembelian</p>
+        </div>
+        <button class="btn btn-primary" onclick="refreshData()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          Refresh
+        </button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background: #e8f0f8;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5b7fa6" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Total PO</span>
+            <span class="stat-value" id="stat-total-po">—</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background: #fdf3e7;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c4943a" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Menunggu Pembayaran</span>
+            <span class="stat-value" id="stat-menunggu">—</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background: #e7f3ec;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5a9a6a" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Lunas</span>
+            <span class="stat-value" id="stat-lunas">—</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background: #f3e8e8;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a65b5b" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Total Hutang</span>
+            <span class="stat-value" id="stat-hutang">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-card">
+        <div class="card-header">
+          <h3>Tagihan Terbaru</h3>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Tanggal</th>
+                <th>PO Number</th>
+                <th>Vendor</th>
+                <th>Total Harga</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="dashboard-recent">
+              <tr><td colspan="5" class="empty-state">Memuat data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== TAGIHAN MASUK ========== -->
+    <section class="page" id="page-tagihan">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Tagihan Masuk</h1>
+          <p class="page-subtitle">Daftar tagihan dari unit Purchasing</p>
+        </div>
+        <div class="header-actions">
+          <input type="text" class="search-input" placeholder="Cari PO / Vendor..." id="search-tagihan" oninput="filterTable('tagihan-body','search-tagihan')">
+        </div>
+      </div>
+      <div class="content-card">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Tanggal</th>
+                <th>PO Number</th>
+                <th>Unit</th>
+                <th>Vendor</th>
+                <th>Total Harga</th>
+                <th>Total Dibayar</th>
+                <th>Sisa Tagihan</th>
+                <th>Status Pembayaran</th>
+              </tr>
+            </thead>
+            <tbody id="tagihan-body">
+              <tr><td colspan="8" class="empty-state">Memuat data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== DETAIL PO ========== -->
+    <section class="page" id="page-detail-po">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Detail PO</h1>
+          <p class="page-subtitle">Monitoring barang & kontrol harga</p>
+        </div>
+        <div class="header-actions">
+          <input type="text" class="search-input" placeholder="Cari PO / Vendor / Barang..." id="search-detail-po" oninput="filterTable('detail-po-body','search-detail-po')">
+        </div>
+      </div>
+      <div class="content-card">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>PO Number</th>
+                <th>Tanggal</th>
+                <th>Vendor</th>
+                <th>Kode Barang</th>
+                <th>Deskripsi</th>
+                <th>Qty</th>
+                <th>Satuan</th>
+                <th>Harga Satuan</th>
+                <th>Total Item</th>
+              </tr>
+            </thead>
+            <tbody id="detail-po-body">
+              <tr><td colspan="9" class="empty-state">Memuat data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== FORM PEMBAYARAN ========== -->
+    <section class="page" id="page-pembayaran">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Form Pembayaran</h1>
+          <p class="page-subtitle">Buat form pengajuan pembayaran ke pimpinan</p>
+        </div>
+      </div>
+
+      <!-- Status Banner -->
+      <div class="status-banner" id="status-banner" style="display:none;"></div>
+
+      <!-- Step Indicator -->
+      <div class="steps-indicator">
+        <div class="step active" id="step-1">
+          <div class="step-number">1</div>
+          <div class="step-label">Load PO</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" id="step-2">
+          <div class="step-number">2</div>
+          <div class="step-label">Review Data</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" id="step-3">
+          <div class="step-number">3</div>
+          <div class="step-label">Input Pembayaran</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step" id="step-4">
+          <div class="step-number">4</div>
+          <div class="step-label">Cetak / Realisasi</div>
+        </div>
+      </div>
+
+      <!-- Step 1: Load PO -->
+      <div class="form-card" id="form-step-1">
+        <div class="form-card-header">
+          <div class="form-card-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+          <div>
+            <h3 class="form-card-title">Nomor Purchase Order</h3>
+            <p class="form-card-desc">Masukkan nomor PO untuk memuat data dari Tagihan Masuk</p>
+          </div>
+        </div>
+        <div class="form-card-body">
+          <div class="input-group-large">
+            <input type="text" id="input-po" placeholder="Contoh: AA-LF/PO-IV/033/2026" class="form-input-large" value="">
+            <button class="btn btn-primary btn-lg" onclick="loadPOData()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              Load Data
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2 & 3: Info + Payment (hidden until PO loaded) -->
+      <div id="form-content-loaded" style="display:none;">
+        
+        <!-- Info PO Card -->
+        <div class="form-card" id="form-step-2">
+          <div class="form-card-header">
+            <div class="form-card-icon form-card-icon-info">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+            </div>
+            <div>
+              <h3 class="form-card-title">Informasi Purchase Order</h3>
+              <p class="form-card-desc">Data otomatis dari Tagihan Masuk</p>
+            </div>
+          </div>
+          <div class="form-card-body">
+            <div class="info-grid-compact">
+              <div class="info-item">
+                <span class="info-item-label">Tanggal</span>
+                <span class="info-item-value" id="form-tanggal">—</span>
+              </div>
+              <div class="info-item">
+                <span class="info-item-label">Unit</span>
+                <span class="info-item-value" id="form-unit">—</span>
+              </div>
+              <div class="info-item">
+                <span class="info-item-label">Vendor</span>
+                <span class="info-item-value" id="form-vendor">—</span>
+              </div>
+              <div class="info-item">
+                <span class="info-item-label">Alamat</span>
+                <span class="info-item-value" id="form-alamat">—</span>
+              </div>
+              <div class="info-item info-item-highlight">
+                <span class="info-item-label">Total Tagihan</span>
+                <span class="info-item-value" id="form-total">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Details Card -->
+        <div class="form-card" id="form-step-3">
+          <div class="form-card-header">
+            <div class="form-card-icon form-card-icon-payment">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <div>
+              <h3 class="form-card-title">Detail Pembayaran</h3>
+              <p class="form-card-desc">Isi informasi pembayaran yang akan dilakukan</p>
+            </div>
+          </div>
+          <div class="form-card-body">
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">Tanggal Bayar</label>
+                <input type="date" id="form-tgl-bayar" class="form-input">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Metode Pembayaran</label>
+                <select id="form-metode" class="form-input">
+                  <option value="">Pilih metode...</option>
+                  <option value="TRANSFER">Transfer</option>
+                  <option value="CASH">Cash</option>
+                  <option value="TRANSFER BANK">Transfer Bank</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Rekening</label>
+                <input type="text" id="form-rekening" class="form-input" placeholder="Nomor rekening tujuan">
+              </div>
+              <div class="form-group">
+                <label class="form-label">No Bukti</label>
+                <input type="text" id="form-bukti" class="form-input" placeholder="Nomor bukti transaksi">
+              </div>
+              <div class="form-group form-group-highlight">
+                <label class="form-label">Jumlah Pembayaran</label>
+                <input type="text" id="form-jumlah" class="form-input form-input-highlight" placeholder="Rp 0">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Keterangan</label>
+                <select id="form-keterangan" class="form-input">
+                  <option value="">Pilih...</option>
+                  <option value="DP">DP (Down Payment)</option>
+                  <option value="TR">TR (Termin)</option>
+                  <option value="FL">FL (Pelunasan)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Summary Card -->
+        <div class="summary-card" id="form-summary" style="display:none;">
+          <div class="summary-card-body">
+            <div class="summary-grid">
+              <div class="summary-item">
+                <span class="summary-label">Total PO</span>
+                <span class="summary-value" id="summary-total-po">Rp 0</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Sudah Dibayar</span>
+                <span class="summary-value summary-value-muted" id="summary-dibayar">Rp 0</span>
+              </div>
+              <div class="summary-item summary-item-primary">
+                <span class="summary-label">Sisa Tagihan</span>
+                <span class="summary-value" id="summary-sisa">Rp 0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detail Items -->
+        <div class="content-card" id="detail-items-card" style="display:none;">
+          <div class="card-header">
+            <h3>Detail Barang</h3>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Kode</th>
+                  <th>Deskripsi</th>
+                  <th>Qty</th>
+                  <th>Satuan</th>
+                  <th>Harga Satuan</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody id="detail-items-body"></tbody>
+              <tfoot id="detail-items-footer"></tfoot>
+            </table>
+          </div>
+        </div>
+
+        <!-- Payment History -->
+        <div class="content-card" id="history-card" style="display:none;">
+          <div class="card-header">
+            <h3>Riwayat Pembayaran</h3>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tanggal Bayar</th>
+                  <th>Keterangan</th>
+                  <th>No Bukti</th>
+                  <th>Jumlah Bayar</th>
+                </tr>
+              </thead>
+              <tbody id="history-body"></tbody>
+              <tfoot id="history-footer"></tfoot>
+            </table>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <button class="btn btn-secondary" id="btn-submit" onclick="submitToLogPembelian()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Simpan Draft
+          </button>
+          <button class="btn btn-secondary" id="btn-pdf" onclick="generatePDF()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Cetak / Save as PDF
+          </button>
+          <button class="btn btn-primary" id="btn-realize" onclick="realizePayment()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            Realisasikan
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== LOG PEMBELIAN ========== -->
+    <section class="page" id="page-log-pembelian">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Log Pembelian</h1>
+          <p class="page-subtitle">Rencana pembayaran yang sudah disetujui</p>
+        </div>
+        <div class="header-actions">
+          <input type="text" class="search-input" placeholder="Cari PO / Vendor..." id="search-pembelian" oninput="filterTable('log-pembelian-body','search-pembelian')">
+        </div>
+      </div>
+      <div class="content-card">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Tanggal</th>
+                <th>PO Number</th>
+                <th>Vendor</th>
+                <th>Metode</th>
+                <th>Total PO</th>
+                <th>Jumlah</th>
+                <th>Sisa Tagihan</th>
+                <th>Keterangan</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="log-pembelian-body">
+              <tr><td colspan="9" class="empty-state">Memuat data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== LOG PEMBAYARAN ========== -->
+    <section class="page" id="page-log-pembayaran">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Log Pembayaran</h1>
+          <p class="page-subtitle">Bukti pembayaran yang sudah direalisasi</p>
+        </div>
+        <div class="header-actions">
+          <input type="text" class="search-input" placeholder="Cari PO / Vendor..." id="search-pembayaran" oninput="filterTable('log-pembayaran-body','search-pembayaran')">
+        </div>
+      </div>
+      <div class="content-card">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Tanggal Bayar</th>
+                <th>PO Number</th>
+                <th>Vendor</th>
+                <th>Metode</th>
+                <th>No Bukti</th>
+                <th>Total PO</th>
+                <th>Jumlah Bayar</th>
+                <th>Sisa Tagihan</th>
+                <th>Keterangan</th>
+              </tr>
+            </thead>
+            <tbody id="log-pembayaran-body">
+              <tr><td colspan="9" class="empty-state">Memuat data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== REKAP HUTANG ========== -->
+    <section class="page" id="page-rekap">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Rekap Hutang Vendor</h1>
+          <p class="page-subtitle">Ringkasan hutang per vendor</p>
+        </div>
+        <div class="header-actions">
+          <input type="text" class="search-input" placeholder="Cari PO / Vendor..." id="search-rekap" oninput="filterTable('rekap-body','search-rekap')">
+        </div>
+      </div>
+      <div class="content-card">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Tanggal</th>
+                <th>PO Number</th>
+                <th>Unit</th>
+                <th>Vendor</th>
+                <th>Total Harga</th>
+                <th>Total Dibayar</th>
+                <th>Sisa Tagihan</th>
+                <th>Status</th>
+                <th>Deskripsi</th>
+              </tr>
+            </thead>
+            <tbody id="rekap-body">
+              <tr><td colspan="9" class="empty-state">Memuat data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Overlay for mobile sidebar -->
+  <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+  <!-- Loading Spinner -->
+  <div class="loading-spinner" id="loadingSpinner" style="display:none;">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
