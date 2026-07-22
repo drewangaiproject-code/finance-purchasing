@@ -53,6 +53,32 @@
   --radius-sm: 6px;
 }
 
+[data-theme="dark"] {
+  --bg: #12161c;
+  --surface: #1a1f27;
+  --border: #2a3040;
+  --border-light: #222832;
+
+  --text-primary: #e2e6ec;
+  --text-secondary: #9aa3ae;
+  --text-muted: #6b7580;
+
+  --accent: #7ba0c4;
+  --accent-hover: #8fb2d4;
+  --accent-light: #1e2a38;
+
+  --status-lunas-bg: #162a1e;
+  --status-belum-bg: #2a2216;
+  --status-draft-bg: #222832;
+  --status-realisasi-bg: #1e2a38;
+
+  --danger-bg: #2a1a1a;
+
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.2);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.3);
+}
+
 html {
   font-size: 14px;
   -webkit-font-smoothing: antialiased;
@@ -146,7 +172,34 @@ body {
 .sidebar-footer {
   padding: 16px 16px;
   border-top: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
+
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 13px;
+}
+
+.theme-toggle:hover {
+  background: var(--border-light);
+  color: var(--text-primary);
+}
+
+.theme-toggle .icon-moon { display: none; }
+[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+[data-theme="dark"] .theme-toggle .icon-moon { display: flex; }
 
 .user-info {
   display: flex;
@@ -348,6 +401,16 @@ body {
   flex-shrink: 0;
 }
 
+.stat-icon-blue { background: #e8f0f8; }
+.stat-icon-yellow { background: #fdf3e7; }
+.stat-icon-green { background: #e7f3ec; }
+.stat-icon-red { background: #f3e8e8; }
+
+[data-theme="dark"] .stat-icon-blue { background: #1e2a38; }
+[data-theme="dark"] .stat-icon-yellow { background: #2a2216; }
+[data-theme="dark"] .stat-icon-green { background: #162a1e; }
+[data-theme="dark"] .stat-icon-red { background: #2a1a1a; }
+
 .stat-info {
   display: flex;
   flex-direction: column;
@@ -417,7 +480,7 @@ tbody td {
 }
 
 tbody tr:hover {
-  background: #fafbfc;
+  background: var(--border-light);
 }
 
 tbody tr:last-child td {
@@ -716,6 +779,57 @@ tfoot td {
   gap: 10px;
   padding: 16px 20px;
   border-top: 1px solid var(--border);
+}
+
+/* --- Action Buttons --- */
+.action-cell {
+  display: flex;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  background: transparent;
+}
+
+.btn-edit {
+  color: var(--accent);
+}
+
+.btn-edit:hover {
+  background: var(--accent-light);
+}
+
+.btn-delete {
+  color: var(--danger);
+}
+
+.btn-delete:hover {
+  background: var(--danger-bg);
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: #8e4e4e;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
 }
 
 /* --- PDF Preview Styles --- */

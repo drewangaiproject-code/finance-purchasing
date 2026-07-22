@@ -126,6 +126,39 @@ async function updateSheetCell(sheetName, range, value) {
   }
 }
 
+async function updateSheetRow(sheetName, rowIndex, headers, values) {
+  try {
+    const lastCol = String.fromCharCode(64 + headers.length);
+    const range = `${sheetName}!A${rowIndex}:${lastCol}${rowIndex}`;
+    const response = await gapi.client.sheets.spreadsheets.values.update({
+      spreadsheetId: CONFIG.SPREADSHEET_ID,
+      range: range,
+      valueInputOption: 'USER_ENTERED',
+    }, { values: [values] });
+    return response.result;
+  } catch (err) {
+    console.error(`Error updating row in ${sheetName}:`, err);
+    throw err;
+  }
+}
+
+async function deleteSheetRow(sheetName, rowIndex, colCount) {
+  try {
+    const lastCol = String.fromCharCode(64 + colCount);
+    const range = `${sheetName}!A${rowIndex}:${lastCol}${rowIndex}`;
+    const emptyValues = Array(colCount).fill('');
+    const response = await gapi.client.sheets.spreadsheets.values.update({
+      spreadsheetId: CONFIG.SPREADSHEET_ID,
+      range: range,
+      valueInputOption: 'USER_ENTERED',
+    }, { values: [emptyValues] });
+    return response.result;
+  } catch (err) {
+    console.error(`Error deleting row in ${sheetName}:`, err);
+    throw err;
+  }
+}
+
 async function loadAllData() {
   showLoading(true);
   try {
@@ -162,11 +195,13 @@ async function loadAllData() {
 function parseRows(rawData) {
   if (rawData.length < 2) return [];
   const headers = rawData[0];
-  return rawData.slice(1).map(row => {
+  return rawData.slice(1).map((row, i) => {
     const obj = {};
-    headers.forEach((h, i) => {
-      obj[h] = row[i] || '';
+    headers.forEach((h, j) => {
+      obj[h] = row[j] || '';
     });
+    obj._rowIndex = i + 2; // sheet row (1-based, +1 for header)
+    obj._headers = headers;
     return obj;
   });
 }
@@ -284,6 +319,14 @@ function renderLogPembelian() {
       <td>${r['Sisa Tagihan'] || '—'}</td>
       <td>${r['Keterangan'] || '—'}</td>
       <td>${statusBadge(r['Status'])}</td>
+      <td class="action-cell">
+        <button class="btn-icon btn-edit" onclick="openEditModal('logPembelian', ${r._rowIndex})" title="Edit">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <button class="btn-icon btn-delete" onclick="openDeleteModal('logPembelian', ${r._rowIndex}, '${r['Nomor PO']}')" title="Hapus">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        </button>
+      </td>
     </tr>
   `).join('');
 }
@@ -309,6 +352,14 @@ function renderLogPembayaran() {
       <td>${r['Jumlah Bayar'] || '—'}</td>
       <td>${r['Sisa Tagihan'] || '—'}</td>
       <td>${r['Keterangan'] || '—'}</td>
+      <td class="action-cell">
+        <button class="btn-icon btn-edit" onclick="openEditModal('logPembayaran', ${r._rowIndex})" title="Edit">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <button class="btn-icon btn-delete" onclick="openDeleteModal('logPembayaran', ${r._rowIndex}, '${r['Nomor PO']}')" title="Hapus">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        </button>
+      </td>
     </tr>
   `).join('');
 }
@@ -900,6 +951,140 @@ function generatePDF() {
   }, 500);
 }
 
+// --- Edit & Delete ---
+const EDIT_FIELDS = {
+  logPembelian: [
+    { key: 'Tanggal Pembelian', label: 'Tanggal', type: 'date' },
+    { key: 'Nomor PO', label: 'Nomor PO', type: 'text' },
+    { key: 'Vendor', label: 'Vendor', type: 'text' },
+    { key: 'Metode', label: 'Metode', type: 'select', options: ['TRANSFER', 'CASH', 'TRANSFER BANK'] },
+    { key: 'Total PO', label: 'Total PO', type: 'currency' },
+    { key: 'Jumlah', label: 'Jumlah', type: 'currency' },
+    { key: 'Sisa Tagihan', label: 'Sisa Tagihan', type: 'currency' },
+    { key: 'Keterangan', label: 'Keterangan', type: 'select', options: ['DP', 'TR', 'FL'] },
+    { key: 'Status', label: 'Status', type: 'select', options: ['Draft', 'Realisasi'] },
+  ],
+  logPembayaran: [
+    { key: 'Tanggal Bayar', label: 'Tanggal Bayar', type: 'date' },
+    { key: 'Nomor PO', label: 'Nomor PO', type: 'text' },
+    { key: 'Vendor', label: 'Vendor', type: 'text' },
+    { key: 'Metode', label: 'Metode', type: 'select', options: ['TRANSFER', 'CASH', 'TRANSFER BANK'] },
+    { key: 'No Bukti', label: 'No Bukti', type: 'text' },
+    { key: 'Total PO', label: 'Total PO', type: 'currency' },
+    { key: 'Jumlah Bayar', label: 'Jumlah Bayar', type: 'currency' },
+    { key: 'Sisa Tagihan', label: 'Sisa Tagihan', type: 'currency' },
+    { key: 'Keterangan', label: 'Keterangan', type: 'select', options: ['DP', 'TR', 'FL'] },
+  ],
+};
+
+let editingSheet = null;
+let editingRow = null;
+let deletingSheet = null;
+let deletingRow = null;
+
+function openEditModal(sheetKey, rowIndex) {
+  editingSheet = sheetKey;
+  editingRow = rowIndex;
+
+  const data = allData[sheetKey === 'logPembelian' ? 'logPembelian' : 'logPembayaran'];
+  const row = data.find(r => r._rowIndex === rowIndex);
+  if (!row) { showToast('Data tidak ditemukan', 'error'); return; }
+
+  const fields = EDIT_FIELDS[sheetKey];
+  const body = document.getElementById('modal-body');
+  const sheetLabel = sheetKey === 'logPembelian' ? 'Log Pembelian' : 'Log Pembayaran';
+  document.getElementById('modal-title').textContent = `Edit — ${sheetLabel}`;
+
+  body.innerHTML = '<div class="form-grid">' + fields.map(f => {
+    const val = row[f.key] || '';
+    if (f.type === 'select') {
+      return `<div class="form-group">
+        <label class="form-label">${f.label}</label>
+        <select class="form-input" data-key="${f.key}">
+          <option value="">Pilih...</option>
+          ${f.options.map(o => `<option value="${o}" ${val === o ? 'selected' : ''}>${o}</option>`).join('')}
+        </select>
+      </div>`;
+    }
+    return `<div class="form-group">
+      <label class="form-label">${f.label}</label>
+      <input type="${f.type === 'currency' ? 'text' : f.type}" class="form-input" data-key="${f.key}" value="${val}">
+    </div>`;
+  }).join('') + '</div>';
+
+  document.getElementById('editModal').style.display = 'flex';
+}
+
+function closeEditModal() {
+  document.getElementById('editModal').style.display = 'none';
+  editingSheet = null;
+  editingRow = null;
+}
+
+async function saveEdit() {
+  if (!editingSheet || !editingRow) return;
+  showLoading(true);
+
+  try {
+    const fields = EDIT_FIELDS[editingSheet];
+    const sheetName = editingSheet === 'logPembelian' ? CONFIG.SHEETS.LOG_PEMBELIAN : CONFIG.SHEETS.LOG_PEMBAYARAN;
+    const dataKey = editingSheet === 'logPembelian' ? 'logPembelian' : 'logPembayaran';
+    const row = allData[dataKey].find(r => r._rowIndex === editingRow);
+    if (!row) throw new Error('Data tidak ditemukan');
+
+    const headers = row._headers;
+    const values = headers.map(h => {
+      const el = document.querySelector(`[data-key="${h}"]`);
+      return el ? el.value : (row[h] || '');
+    });
+
+    await updateSheetRow(sheetName, editingRow, headers, values);
+    showToast('Data berhasil diupdate', 'success');
+    closeEditModal();
+    await loadAllData();
+  } catch (err) {
+    showToast('Gagal update: ' + err.message, 'error');
+  } finally {
+    showLoading(false);
+  }
+}
+
+function openDeleteModal(sheetKey, rowIndex, poNumber) {
+  deletingSheet = sheetKey;
+  deletingRow = rowIndex;
+  const sheetLabel = sheetKey === 'logPembelian' ? 'Log Pembelian' : 'Log Pembayaran';
+  document.getElementById('delete-message').textContent =
+    `Yakin ingin menghapus data PO ${poNumber} dari ${sheetLabel}?`;
+  document.getElementById('deleteModal').style.display = 'flex';
+}
+
+function closeDeleteModal() {
+  document.getElementById('deleteModal').style.display = 'none';
+  deletingSheet = null;
+  deletingRow = null;
+}
+
+async function confirmDelete() {
+  if (!deletingSheet || !deletingRow) return;
+  showLoading(true);
+
+  try {
+    const sheetName = deletingSheet === 'logPembelian' ? CONFIG.SHEETS.LOG_PEMBELIAN : CONFIG.SHEETS.LOG_PEMBAYARAN;
+    const dataKey = deletingSheet === 'logPembelian' ? 'logPembelian' : 'logPembayaran';
+    const row = allData[dataKey].find(r => r._rowIndex === deletingRow);
+    const colCount = row ? row._headers.length : 11;
+
+    await deleteSheetRow(sheetName, deletingRow, colCount);
+    showToast('Data berhasil dihapus', 'success');
+    closeDeleteModal();
+    await loadAllData();
+  } catch (err) {
+    showToast('Gagal hapus: ' + err.message, 'error');
+  } finally {
+    showLoading(false);
+  }
+}
+
 // --- Navigation ---
 document.querySelectorAll('.nav-item').forEach(item => {
   item.addEventListener('click', (e) => {
@@ -914,6 +1099,14 @@ document.querySelectorAll('.nav-item').forEach(item => {
 
     closeSidebar();
   });
+});
+
+// --- Keyboard Shortcuts ---
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeEditModal();
+    closeDeleteModal();
+  }
 });
 
 // --- Mobile Sidebar ---
@@ -937,13 +1130,14 @@ function closeSidebar() {
 function formatCurrency(amount) {
   const num = typeof amount === 'string' ? parseCurrency(amount) : amount;
   if (isNaN(num) || num === 0) return 'Rp 0';
-  return 'Rp ' + Math.round(num).toLocaleString('id-ID');
+  const formatted = 'Rp ' + Math.round(Math.abs(num)).toLocaleString('id-ID');
+  return num < 0 ? `(${formatted})` : formatted;
 }
 
 function parseCurrency(str) {
   if (!str) return 0;
-  const cleaned = String(str).replace(/[^0-9-]/g, '');
-  return parseInt(cleaned, 10) || 0;
+  const cleaned = String(str).replace(/[^0-9,.-]/g, '').replace(/,/g, '.');
+  return parseFloat(cleaned) || 0;
 }
 
 function statusBadge(status) {
@@ -969,8 +1163,38 @@ function showToast(message, type = 'success') {
   setTimeout(() => toast.remove(), 3500);
 }
 
+// --- Dark Mode ---
+function toggleTheme() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  localStorage.setItem('fp-theme', isDark ? 'light' : 'dark');
+}
+
+function loadTheme() {
+  const saved = localStorage.getItem('fp-theme');
+  if (saved === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+}
+
+// --- Currency Input Mask ---
+function setupCurrencyMask() {
+  const input = document.getElementById('form-jumlah');
+  if (!input) return;
+  input.addEventListener('input', (e) => {
+    let val = e.target.value.replace(/[^0-9]/g, '');
+    if (!val) { e.target.value = ''; return; }
+    e.target.value = 'Rp ' + parseInt(val, 10).toLocaleString('id-ID');
+  });
+  input.addEventListener('focus', (e) => {
+    if (e.target.value === 'Rp 0') e.target.value = '';
+  });
+}
+
 // --- Init on Load ---
 window.addEventListener('load', () => {
+  setupCurrencyMask();
+  loadTheme();
   const gapiScript = document.createElement('script');
   gapiScript.src = 'https://apis.google.com/js/api.js';
   gapiScript.onload = gapiLoaded;
