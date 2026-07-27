@@ -14,7 +14,7 @@ const CONFIG = {
     LOG_PEMBAYARAN: 'Log Pembayaran',
     REKAP: 'Rekap Hutang Vendor'
   },
-  API_KEY: '',
+  API_KEY: '1zjtrcYPgY0WpWK3LEas04-Y_5-1ob1rJ6JNdIqAcubA',
   CLIENT_ID: '1021440664537-9ic5rv15tudiu69e79av1p7g55u9dj33.apps.googleusercontent.com',
   SCOPES: 'https://www.googleapis.com/auth/spreadsheets',
   DISCOVERY_DOC: 'https://sheets.googleapis.com/$discovery/rest?version=v4',
@@ -761,11 +761,11 @@ function generatePDF() {
     return;
   }
 
-  const vendor = document.getElementById('form-vendor').value;
-  const unit = document.getElementById('form-unit').value;
-  const tanggal = document.getElementById('form-tanggal').value;
-  const alamat = document.getElementById('form-alamat').value;
-  const totalTagihan = document.getElementById('form-total').value;
+  const vendor = document.getElementById('form-vendor').textContent;
+  const unit = document.getElementById('form-unit').textContent;
+  const tanggal = document.getElementById('form-tanggal').textContent;
+  const alamat = document.getElementById('form-alamat').textContent;
+  const totalTagihan = document.getElementById('form-total').textContent;
   const tglBayar = document.getElementById('form-tgl-bayar').value;
   const metode = document.getElementById('form-metode').value;
   const rekening = document.getElementById('form-rekening').value;
